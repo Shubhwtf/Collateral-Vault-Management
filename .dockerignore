@@ -1,0 +1,98 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+COMMANDS.md
+CONTRIBUTING.md
+IMPLEMENTATION_GUIDE.md
+LICENSE
+README.md
+docs/
+
+# Docker
+.dockerignore
+Dockerfile
+docker-compose*.yml
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Rust
+target/
+**/*.rs.bk
+Cargo.lock
+.cargo/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.npm
+.node_repl_history
+
+# Build artifacts
+dist/
+build/
+out/
+*.o
+*.a
+*.so
+*.exe
+*.dll
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+!env.example
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Test
+test-ledger/
+.anchor/
+coverage/
+*.gcda
+*.gcno
+*.gcov
+
+# Temporary
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+*.backup
+*.bak
+
+# Solana
+.solana/
+.config/solana/
+keypairs/*.json
+!keypairs/.gitkeep

@@ -1,0 +1,164 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Anchor
+.anchor/
+test-ledger/
+**/target/deploy/
+**/target/idl/
+**/target/types/
+
+/backend/.cargo
+
+# IDL
+*.json.tmp
+**/target/idl/*.json
+!**/target/idl/.gitkeep
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# IDE - VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# IDE - JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# IDE - Vim
+*.swp
+*.swo
+*~
+*.swn
+*.swm
+Session.vim
+.netrwhist
+
+# IDE - Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Solana
+.solana/
+.config/solana/
+*.so
+keypairs/*.json
+!keypairs/.gitkeep
+test-ledger/
+
+# Node (if using for tests/frontend)
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.npm
+.node_repl_history
+
+# Build artifacts
+dist/
+build/
+out/
+*.o
+*.a
+*.dylib
+*.dll
+*.exe
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Coverage reports
+coverage/
+*.gcda
+*.gcno
+*.gcov
+tarpaulin-report.html
+lcov.info
+
+# Profiling data
+perf.data*
+*.prof
+
+# Debug files
+*.pdb
+*.dSYM/
+
+# Local configuration
+local/
+.local/
+
+# Migration artifacts (if auto-generated)
+**/migrations/*.down.sql
+
+# Test artifacts
+.pytest_cache/
+__pycache__/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Rust-specific
+# Cargo.lock is committed for applications (ensures reproducible builds)
+# Only ignore Cargo.lock if this is a library crate
+
+# Anchor-specific build outputs
+**/target/deploy/*.so
+**/target/deploy/*-keypair.json
+!**/target/deploy/.gitkeep
+
+# Flycheck (Emacs)
+**/flycheck*/
+
+# Generated types
+**/target/types/*.ts
+!**/target/types/.gitkeep
