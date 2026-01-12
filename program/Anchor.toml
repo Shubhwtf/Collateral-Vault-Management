@@ -1,0 +1,23 @@
+[toolchain]
+anchor_version = "0.32.1"
+package_manager = "yarn"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+collateral_vault = "pjYYA2y9UL5N4EDd8wKLySDCvb3N6zCoPtFU8WYsnDP"
+
+[programs.localnet]
+collateral_vault = "pjYYA2y9UL5N4EDd8wKLySDCvb3N6zCoPtFU8WYsnDP"
+
+[registry]
+url = "https://api.devnet.solana.com"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run mocha tests/**/*.ts -t 1000000"

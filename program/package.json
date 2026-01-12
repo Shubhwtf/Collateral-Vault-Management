@@ -1,0 +1,25 @@
+{
+  "name": "collateral-vault-tests",
+  "version": "0.1.0",
+  "description": "Test suite for Collateral Vault Solana program",
+  "scripts": {
+    "test": "anchor test",
+    "test:devnet": "anchor test --provider.cluster devnet",
+    "test:local": "anchor test",
+    "test:verbose": "anchor test -- --verbose"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@solana/spl-token": "^0.4.8",
+    "@solana/web3.js": "^1.87.6",
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^25.0.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
+  }
+}
