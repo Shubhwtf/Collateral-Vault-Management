@@ -306,7 +306,7 @@ The fastest way to get started is using Docker Compose:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/collateral-vault-management-system.git
+git clone https://github.com/Shubhwtf/Collateral-Vault-Management?
 cd collateral-vault-management-system
 
 # Start all services
@@ -540,3 +540,9 @@ We welcome contributions! Please follow these guidelines:
 - All new features must include tests
 - Maintain 100% test pass rate
 - Update test documentation if needed
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+The MIT License is one of the most permissive open-source licenses, allowing you to use, modify, and distribute the code with minimal restrictions. The only requirement is that you include the original copyright notice and license text when redistributing.
