@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE public.vaults\n            SET total_balance = total_balance + $1,\n                available_balance = available_balance + $1,\n                total_deposited = total_deposited + $1,\n                updated_at = NOW()\n            WHERE vault_address = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "7e942fc0a4855456c6f1bf15b05d8673ffb3b2be16bedac81d590da0308560c6"
+}
