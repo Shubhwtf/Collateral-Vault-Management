@@ -1,0 +1,97 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vault-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-collateral_vault}
+      POSTGRES_USER: ${POSTGRES_USER:-vault_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required. Please set it in .env file}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vault_user} -d ${POSTGRES_DB:-collateral_vault}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vault-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        - RUST_VERSION=1.75
+    container_name: vault-backend
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: ${BACKEND_PORT:-8080}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-vault_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-collateral_vault}
+      SOLANA_RPC_URL: ${SOLANA_RPC_URL:-https://api.devnet.solana.com}
+      SOLANA_WS_URL: ${SOLANA_WS_URL:-wss://api.devnet.solana.com}
+      PROGRAM_ID: ${PROGRAM_ID:?PROGRAM_ID is required. Please set it in .env file}
+      PAYER_KEYPAIR_PATH: /app/keypair.json
+      USDT_MINT: ${USDT_MINT:-Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB}
+      RUST_LOG: ${RUST_LOG:-info,vault_backend=debug}
+      RUST_BACKTRACE: ${RUST_BACKTRACE:-1}
+      TRANSACTION_TIMEOUT_SECONDS: ${TRANSACTION_TIMEOUT_SECONDS:-30}
+      MAX_RETRY_ATTEMPTS: ${MAX_RETRY_ATTEMPTS:-3}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - vault-network
+    volumes:
+      - ./backend/migrations:/app/migrations:ro
+      - ${PAYER_KEYPAIR_PATH:?PAYER_KEYPAIR_PATH is required. Please set it in .env file}:/app/keypair.json:ro
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        - NODE_VERSION=20
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:8080}
+    container_name: vault-frontend
+    restart: unless-stopped
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - vault-network
+
+volumes:
+  postgres_data:
+    driver: local
+    name: vault_postgres_data
+
+networks:
+  vault-network:
+    driver: bridge
+    name: vault_network
