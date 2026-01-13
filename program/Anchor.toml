@@ -16,7 +16,7 @@ collateral_vault = "pjYYA2y9UL5N4EDd8wKLySDCvb3N6zCoPtFU8WYsnDP"
 url = "https://api.devnet.solana.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

@@ -8,7 +8,7 @@ test-ledger/
 **/target/deploy/
 **/target/idl/
 **/target/types/
-
+.dev
 /backend/.cargo
 
 # IDL

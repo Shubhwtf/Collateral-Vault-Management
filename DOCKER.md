@@ -4,23 +4,36 @@ Complete guide for deploying the Collateral Vault Management System using Docker
 
 ## Prerequisites
 
-- Docker 20.10 or later
-- Docker Compose 2.0 or later
-- A Solana keypair file for the backend
+- **Docker** 20.10 or later
+- **Docker Compose** 2.0 or later
+- **Solana CLI** 1.16+ (includes `spl-token` CLI) - for running `setup-solana-dev.sh`
+- A Solana keypair file for the backend (can be generated with `setup-solana-dev.sh`)
 - Environment variables configured (see Configuration section)
+
+**Note:** For local development, run `./setup-solana-dev.sh` before starting Docker services to set up your Solana wallet and dev tokens.
 
 ## Quick Start
 
 ### Development
 
 ```bash
+# 1. Set up Solana dev environment (first time only, or when you need new tokens)
+chmod +x setup-solana-dev.sh
+./setup-solana-dev.sh  # Or: ./setup-solana-dev.sh YOUR_PHANTOM_WALLET_PUBKEY
+
+# 2. Start all services
 docker-compose up -d
+
+# 3. View logs
+docker-compose logs -f
 ```
 
 This starts all services:
 - PostgreSQL database on port 5432
 - Backend API on port 8080
 - Frontend on port 3000
+
+**Note:** Make sure to run `setup-solana-dev.sh` first to create your Solana wallet and mint dev tokens. The script output will show you the `USDT_MINT` address to use in your backend `.env` file.
 
 ### Production
 
@@ -79,6 +92,41 @@ VERSION=1.0.0
 The backend requires a Solana keypair file. Place your keypair file in a secure location and set `PAYER_KEYPAIR_PATH` to its absolute path.
 
 **Security Note:** Never commit keypair files to version control. Use environment variables or Docker secrets in production.
+
+### Development Token Setup
+
+For local development and testing, use the `setup-solana-dev.sh` script to set up your Solana environment:
+
+```bash
+# Make script executable (first time only)
+chmod +x setup-solana-dev.sh
+
+# Set up dev environment (creates wallet, mints dev USDT tokens)
+./setup-solana-dev.sh
+
+# Or mint tokens to a specific wallet (e.g., Phantom for frontend testing)
+./setup-solana-dev.sh YOUR_PHANTOM_WALLET_PUBKEY
+```
+
+**What the script does:**
+- Creates or uses a Solana wallet keypair (default: `~/.config/solana/id.json`)
+- Airdrops SOL if balance is low (< 1 SOL)
+- Creates a dev USDT token mint (stored in `.dev/dev-usdt-mint-keypair.json`)
+- Creates an associated token account for the target wallet
+- Mints dev USDT tokens (default: 1,000,000 tokens with 6 decimals)
+
+**Environment Variables:**
+The script supports these optional environment variables:
+- `SOLANA_RPC_URL` - RPC endpoint (default: `https://api.devnet.solana.com`)
+- `SOLANA_KEYPAIR_PATH` - Payer wallet keypair (default: `~/.config/solana/id.json`)
+- `DEV_USDT_MINT_KEYPAIR` - Mint keypair path (default: `./.dev/dev-usdt-mint-keypair.json`)
+- `DEV_USDT_MINT_AMOUNT` - Amount to mint in base units (default: `1000000000000`)
+- `DEV_SOL_AIRDROP_AMOUNT` - SOL to airdrop if needed (default: `2`)
+
+**After running the script:**
+1. Use the mint address output as `USDT_MINT` in your backend `.env`
+2. Use the payer wallet path as `PAYER_KEYPAIR_PATH` in your backend `.env`
+3. Your Phantom wallet (if specified) will have dev USDT tokens for frontend testing
 
 ## Services
 

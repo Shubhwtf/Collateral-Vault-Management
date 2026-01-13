@@ -5,8 +5,8 @@ pub mod instructions;
 pub mod state;
 
 use instructions::*;
-
-declare_id!("pjYYA2y9UL5N4EDd8wKLySDCvb3N6zCoPtFU8WYsnDP");
+// devnet program public key, so fine for committing to github
+declare_id!("J4AH5hKsnigMxdcGoLAffr7XxKVLHw22y6RG3qEsi9Dd");
 
 #[program]
 pub mod collateral_vault {

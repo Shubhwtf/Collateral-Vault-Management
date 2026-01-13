@@ -9,7 +9,6 @@ pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
 
     let vault = &mut ctx.accounts.vault;
 
-    // only checking available_balance here - locked collateral can't be withdrawn
     // this prevents users from pulling funds that are backing active positions
     require!(
         vault.available_balance >= amount,

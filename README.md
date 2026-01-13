@@ -32,12 +32,12 @@ The Collateral Vault Management System is a non-custodial solution for managing 
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Web Frontend                              │
-│                  (React + TypeScript + Vite)                     │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  Wallet Integration (Phantom/Solflare/Sollet)            │  │
-│  │  Pages: Dashboard, Vault, Transactions, Analytics, Yield │  │
-│  └──────────────────────────────────────────────────────────┘  │
+│                        Web Frontend                             │
+│                  (React + TypeScript + Vite)                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Wallet Integration (Phantom/Solflare/Sollet)            │   │
+│  │  Pages: Dashboard, Vault, Transactions, Analytics, Yield │   │
+│  └──────────────────────────────────────────────────────────┘   │
 └────────────────────────────┬────────────────────────────────────┘
                              │ HTTPS/WebSocket
                     ┌────────▼────────┐
@@ -49,7 +49,7 @@ The Collateral Vault Management System is a non-custodial solution for managing 
         │         Rust Backend Service            │
         │  - Vault Manager                        │
         │  - Analytics Engine                     │
-        │  - MFA Service                         │
+        │  - MFA Service                          │
         │  - Snapshot Service                     │
         └────────┬──────────────────┬─────────────┘
                  │                  │
@@ -309,6 +309,10 @@ The fastest way to get started is using Docker Compose:
 git clone https://github.com/Shubhwtf/Collateral-Vault-Management?
 cd collateral-vault-management-system
 
+# Set up Solana dev environment (wallet, tokens, etc.)
+chmod +x setup-solana-dev.sh
+./setup-solana-dev.sh  # Or: ./setup-solana-dev.sh YOUR_PHANTOM_WALLET_PUBKEY
+
 # Start all services
 docker-compose up -d
 
@@ -324,16 +328,35 @@ Services will be available at:
 - **Backend**: `http://localhost:8080`
 - **PostgreSQL**: `localhost:5432`
 
+### Development Token Setup
+
+Before using the frontend, you'll need dev USDT tokens in your wallet. Use the `setup-solana-dev.sh` script:
+
+```bash
+# Mint tokens to your Phantom/Solflare wallet (for frontend testing)
+./setup-solana-dev.sh YOUR_WALLET_PUBKEY
+
+# The script will output:
+# - Mint address (use this as USDT_MINT in backend .env)
+# - Token account address
+# - Payer wallet (for backend PAYER_KEYPAIR_PATH)
+```
+
+The script creates a custom dev USDT mint that you control, so you can mint as many tokens as needed for testing.
+
 ## 🛠️ Installation & Basic Setup
 
 ### Prerequisites
 
 - **Rust** 1.75 or later
-- **Solana CLI** 1.16 or later
+- **Solana CLI** 1.16 or later (includes `spl-token` CLI)
 - **Anchor** 0.32.1
-- **Node.js** 18+ and npm/yarn
+- **Node.js** 18+ and **npm/yarn/pnpm**
+  - Frontend uses **pnpm** (recommended) or npm
+  - Program tests use **yarn** (required by Anchor)
+- **TypeScript** 5.2+ (for frontend and program tests)
 - **PostgreSQL** 14+ (or Neon.tech account)
-- **Docker** and **Docker Compose** (optional, but recommended)
+- **Docker** 20.10+ and **Docker Compose** 2.0+ (optional, but recommended)
 
 ### Installation Steps
 
@@ -357,7 +380,26 @@ avm install 0.32.1
 avm use 0.32.1
 ```
 
-4. **Set Up Solana Wallet**
+4. **Set Up Solana Wallet & Dev Tokens**
+
+**Option A: Quick Setup Script (Recommended)**
+```bash
+# From project root - sets up wallet, mints dev USDT tokens
+./setup-solana-dev.sh
+
+# Or mint tokens to a specific wallet (e.g., your Phantom wallet)
+./setup-solana-dev.sh YOUR_WALLET_PUBKEY
+```
+
+This script will:
+- Create/use a Solana wallet keypair (default: `~/.config/solana/id.json`)
+- Airdrop SOL (only if balance < 1 SOL)
+- Create a dev USDT token mint (stored in `.dev/dev-usdt-mint-keypair.json`)
+- Mint tokens to your wallet for testing
+
+**Note:** The `.dev/` directory contains development keypairs and should be in `.gitignore` (already included).
+
+**Option B: Manual Setup**
 ```bash
 solana-keygen new --outfile ~/.config/solana/id.json
 solana config set --url devnet
@@ -390,17 +432,21 @@ cd backend
 cp .env.example .env
 # Edit .env with your configuration:
 # - PROGRAM_ID: Your deployed program ID
-# - PAYER_KEYPAIR_PATH: Path to Solana keypair
+# - PAYER_KEYPAIR_PATH: Path to Solana keypair (default: ~/.config/solana/id.json)
 # - DATABASE_URL: PostgreSQL connection string
-# - USDT_MINT: Devnet USDT address
+# - USDT_MINT: Devnet USDT address (or use the mint from setup-solana-dev.sh)
 # - SOLANA_RPC_URL: Solana RPC endpoint
 ```
+
+**Note:** If you used `setup-solana-dev.sh`, it will output the `USDT_MINT` address you can use in your `.env` file.
 
 8. **Install Frontend Dependencies**
 ```bash
 cd frontend
-npm install
+pnpm install  # or npm install
 ```
+
+**Note:** The frontend uses `pnpm` by default (see `pnpm-lock.yaml`), but `npm` or `yarn` will also work.
 
 ## 💡 Basic Usage Examples
 
@@ -513,33 +559,6 @@ See [test-results/001-test-coverage-report.md](test-results/001-test-coverage-re
 For comprehensive security analysis including security features, test results, best practices, and known considerations, see:
 
 **[Security Analysis](test-results/002-security-test-results.md)**
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these guidelines:
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests (`anchor test`, `cargo test`, `npm test`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-### Code Style
-
-- **Rust**: Follow `rustfmt` and `clippy` recommendations
-- **TypeScript**: Follow ESLint configuration
-- **Commit Messages**: Use conventional commits format
-- **Tests**: Write tests for all new features
-
-### Testing Requirements
-
-- All new features must include tests
-- Maintain 100% test pass rate
-- Update test documentation if needed
 
 ## 📄 License
 
